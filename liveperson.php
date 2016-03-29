@@ -1,50 +1,62 @@
 <?php
 /**
- * 2014 LivePerson Inc.
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.txt.
- * It is also available through the world-wide-web at this URL:
- * http://opensource.org/licenses/osl-3.0.php
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to support@liveperson.com so we can send you a copy immediately.
- *
- * @author    LivePerson www.liveperson.com
- * @copyright 2014 LivePerson Inc.
- * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * International Registered Trademark & Property of LivePerson
- */
+* 2007-2015 PrestaShop
+*
+* NOTICE OF LICENSE
+*
+* This source file is subject to the Academic Free License (AFL 3.0)
+* that is bundled with this package in the file LICENSE.txt.
+* It is also available through the world-wide-web at this URL:
+* http://opensource.org/licenses/afl-3.0.php
+* If you did not receive a copy of the license and are unable to
+* obtain it through the world-wide-web, please send an email
+* to license@prestashop.com so we can send you a copy immediately.
+*
+* DISCLAIMER
+*
+* Do not edit or add to this file if you wish to upgrade PrestaShop to newer
+* versions in the future. If you wish to customize PrestaShop for your
+* needs please refer to http://www.prestashop.com for more information.
+*
+*  @author    PrestaShop SA <contact@prestashop.com>
+*  @copyright 2007-2015 PrestaShop SA
+*  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+*  International Registered Trademark & Property of PrestaShop SA
+*/
 
-if (!defined('_PS_VERSION_'))
-exit;
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class LivePerson extends Module
 {
-	public function __construct()
-	{
-		$this->name = 'liveperson';
-		$this->tab = 'advertising_marketing';
-		$this->version = '1.0.1';
-		$this->author = 'LivePerson Inc.';
-		$this->need_instance = 0;
-		$this->ps_versions_compliancy = array('min' => '1.6', 'max' => _PS_VERSION_);
-		$this->bootstrap = true;
-		$this->module_key = '2e8f61f64d4b129066239d4f2a349e60';
+    protected $config_form = false;
 
-		parent::__construct();
+    public function __construct()
+    {
+        $this->name = 'liveperson';
+        $this->tab = 'advertising_marketing';
+        $this->version = '2.0.0';
+        $this->author = 'LivePerson Inc.';
+        $this->need_instance = 1;
 
-		$this->displayName = $this->l('LivePerson - LiveEngage');
-		$this->description = $this->l('LivePerson delivers an easy-to-use application for live digital engagement.  This includes chat, targeted offers and messaging. This type of personalized engagement helps drive increased conversions, decrease cart abandonment, and increase customer satisfaction.');
+        /**
+         * Set $this->bootstrap to true if your module is compliant with bootstrap (PrestaShop 1.6)
+         */
+        $this->bootstrap = true;
 
-		$this->confirmUninstall = $this->l('Are you sure you want to uninstall LivePerson from your store?');
+        parent::__construct();
 
-		if (!Configuration::get('LP_SITEID'))
-		$this->warning = $this->l('No name provided');
-	}
+        $this->displayName = $this->l('LivePerson LiveChat + Messaging');
+        $this->description = $this->l('LivePerson delivers an easy-to-use application for live digital engagement. This includes chat, targeted offers and messaging. This type of personalized engagement helps drive increased conversions, decrease cart abandonment, and increase customer satisfaction.');
+    }
 
+    /**
+     * Don't forget to create update methods if needed:
+     * http://doc.prestashop.com/display/PS16/Enabling+the+Auto-Update
+     */
+    
+	
 	public function install()
 	{
 		if (!parent::install() ||
@@ -55,7 +67,7 @@ class LivePerson extends Module
 	return true;
 	}
 
-	public function uninstall()
+    public function uninstall()
 	{
 		if (!parent::uninstall() ||
 		!Configuration::deleteByName('LP_SITEID'))
@@ -64,7 +76,10 @@ class LivePerson extends Module
 	return true;
 	}
 
-	public function getContent()
+    /**
+     * Load the configuration form
+     */
+   public function getContent()
 	{
 		$output = null;
 
@@ -159,4 +174,23 @@ class LivePerson extends Module
 		return "<!-- BEGIN LivePerson Monitor. --><script type='text/javascript'>window.lpTag=window.lpTag||{};if(typeof window.lpTag._tagCount==='undefined'){window.lpTag={site:'".$lp_site_id . "'||'',section:lpTag.section||'',autoStart:lpTag.autoStart===false?false:true,ovr:lpTag.ovr||{},_v:'1.5.1',_tagCount:1,protocol:location.protocol,events:{bind:function(app,ev,fn){lpTag.defer(function(){lpTag.events.bind(app,ev,fn);},0);},trigger:function(app,ev,json){lpTag.defer(function(){lpTag.events.trigger(app,ev,json);},1);}},defer:function(fn,fnType){if(fnType==0){this._defB=this._defB||[];this._defB.push(fn);}else if(fnType==1){this._defT=this._defT||[];this._defT.push(fn);}else{this._defL=this._defL||[];this._defL.push(fn);}},load:function(src,chr,id){var t=this;setTimeout(function(){t._load(src,chr,id);},0);},_load:function(src,chr,id){var url=src;if(!src){url=this.protocol+'//'+((this.ovr&&this.ovr.domain)?this.ovr.domain:'lptag.liveperson.net')+'/tag/tag.js?site='+this.site;}var s=document.createElement('script');s.setAttribute('charset',chr?chr:'UTF-8');if(id){s.setAttribute('id',id);}s.setAttribute('src',url);document.getElementsByTagName('head').item(0).appendChild(s);},init:function(){this._timing=this._timing||{};this._timing.start=(new Date()).getTime();var that=this;if(window.attachEvent){window.attachEvent('onload',function(){that._domReady('domReady');});}else{window.addEventListener('DOMContentLoaded',function(){that._domReady('contReady');},false);window.addEventListener('load',function(){that._domReady('domReady');},false);}if(typeof(window._lptStop)=='undefined'){this.load();}},start:function(){this.autoStart=true;},_domReady:function(n){if(!this.isDom){this.isDom=true;this.events.trigger('LPT','DOM_READY',{t:n});}this._timing[n]=(new Date()).getTime();},vars:lpTag.vars||[],dbs:lpTag.dbs||[],ctn:lpTag.ctn||[],sdes:lpTag.sdes||[],ev:lpTag.ev||[]};lpTag.init();}else{window.lpTag._tagCount+=1;}</script><!-- END LivePerson Monitor. -->";
 	}
 
+    /**
+    * Add the CSS & JavaScript files you want to be loaded in the BO.
+    */
+    public function hookBackOfficeHeader()
+    {
+        if (Tools::getValue('module_name') == $this->name) {
+            $this->context->controller->addJS($this->_path.'views/js/back.js');
+            $this->context->controller->addCSS($this->_path.'views/css/back.css');
+        }
+    }
+
+    /**
+     * Add the CSS & JavaScript files you want to be added on the FO.
+     */
+    public function hookHeader()
+    {
+        $this->context->controller->addJS($this->_path.'/views/js/front.js');
+        $this->context->controller->addCSS($this->_path.'/views/css/front.css');
+    }
 }
